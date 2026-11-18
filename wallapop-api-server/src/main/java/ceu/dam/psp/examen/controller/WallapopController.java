@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ceu.dam.psp.examen.dto.request.ArticuloCreateRequestDto;
-import ceu.dam.psp.examen.dto.request.FiltroRequestDto;
 import ceu.dam.psp.examen.dto.request.UserCreateRequestDto;
 import ceu.dam.psp.examen.dto.request.UserLoginRequestDto;
 import ceu.dam.psp.examen.dto.response.ArticuloResponseDto;
@@ -70,23 +69,23 @@ public class WallapopController {
 
 	@PostMapping("/articulos")
 	@Operation(summary = "", description = "")
-	public UserResponseDto crearArticulo(@Valid @RequestBody ArticuloCreateRequestDto articulo) throws NoExisteException {
-		Usuario user = service.consultarUsuario(articulo.getIdPropietario());
+	public UserResponseDto crearArticulo(@Valid @RequestBody ArticuloCreateRequestDto articulo)
+			throws NoExisteException {
+		service.consultarUsuario(articulo.getIdPropietario());
 
 		Articulo art = mapper.map(articulo, Articulo.class);
 		art.setFechaPublicacion(LocalDate.now());
 		art.setEstado(0);
-		user = service.crearArticulo(art);
+		Usuario user = service.crearArticulo(art);
 
 		return mapper.map(user, UserResponseDto.class);
 	}
 
 	@GetMapping("articulos/buscar")
-	public List<ArticuloResponseDto> buscarArticulos(@RequestParam(required = false) FiltroRequestDto filtro,
+	public List<ArticuloResponseDto> buscarArticulos(@RequestParam(required = false) String filtro,
 			@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate filtroFechaAltaMinima) {
 
-		List<Articulo> articulos = service.buscarArticulos(filtro.getFiltroNombre(), filtro.getFiltroDescripcion(),
-				filtroFechaAltaMinima);
+		List<Articulo> articulos = service.buscarArticulos(filtro, filtro, filtroFechaAltaMinima);
 		return articulos.stream().map(a -> mapper.map(a, ArticuloResponseDto.class)).toList();
 	}
 
@@ -101,5 +100,6 @@ public class WallapopController {
 		service.comprarArticulo(codigo);
 
 	}
+	
 
 }

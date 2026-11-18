@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class UserCreateRequestDto {
 	@NotBlank
+	@Size(max = 30)
 	private String identificador;
 	@NotBlank
-	@Size(max = 30)
 	private String descripcion;
 	@NotBlank
 	@Size(min = 10)
